@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .cart import Cart
 from store.models import Product
 from django.http import JsonResponse
+from django.contrib import messages
 
 # Create your views here.
 
@@ -26,7 +27,8 @@ def cart_add(request):
         # Check if product is in DB
         product = get_object_or_404(Product, id=product_id)
         # Save the product to session storage
-        cart.add(product=product, quantity=product_qty)     
+        cart.add(product=product, quantity=product_qty)   
+        messages.success(request, "Item Added Successfully")  
         # get cart quantity
         cart_quantity = cart.__len__()
         
@@ -47,6 +49,7 @@ def cart_delete(request):
         product_id = int(request.POST.get("product_id"))
         
         cart.delete(product=product_id)
+        messages.success(request, "Item Deleted Successfully")
         
         # Return the response
         response = JsonResponse({"deleted-product": product_id})
@@ -64,6 +67,7 @@ def cart_update(request):
         product_qty = int(request.POST.get("product_qty"))
         
         cart.update(product=product_id, quantity=product_qty)
+        messages.success(request, "Updated Successfully")
         
         # Return the response
         response = JsonResponse({"qty": product_qty})
