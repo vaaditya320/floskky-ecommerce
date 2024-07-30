@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPasswordForm
 from django import forms
+from .models import *
+
 
 
 
@@ -68,3 +70,38 @@ class ChangePasswordForm(SetPasswordForm):
         self.fields['new_password2'].widget.attrs['placeholder'] = 'Confirm New Password'
         self.fields['new_password2'].label = ''
         self.fields['new_password2'].help_text = '<span class="form-text text-muted"><small>Enter the same password as before, for verification.</small></span>'
+        
+        
+class UserInfoForm(forms.ModelForm):
+    phone = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 
+        'placeholder': 'Phone'
+    }))
+    address1 = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 
+        'placeholder': 'Address Line 1'
+    }))
+    address2 = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 
+        'placeholder': 'Address Line 2'
+    }))
+    city = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 
+        'placeholder': 'City'
+    }))
+    state = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 
+        'placeholder': 'State'
+    }))
+    zipcode = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 
+        'placeholder': 'Zip Code'
+    }))
+    country = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control', 
+        'placeholder': 'Country'
+    }))
+
+    class Meta:
+        model = Profile
+        fields = ["phone", "address1", "address2", "city", "state", "zipcode", "country"]

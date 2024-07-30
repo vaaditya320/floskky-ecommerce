@@ -3,8 +3,8 @@ from .models import *
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm
+from django.db.models import Q
+from .forms import *
 
 # Create your views here.
 
@@ -51,7 +51,7 @@ def register_user(request):
             login(request, user)
             messages.success(request, "you have been logged out")
             # Redirect to a success page or any other page after successful login
-            return redirect('home')
+            return redirect('update_info')
             
     
     return render(request, "register.html", {"form" : form})
@@ -128,3 +128,35 @@ def update_password(request):
         messages.success(request, "You need to login first")
         return redirect("login") 
        
+def update_info(request):
+    
+    if request.user.is_authenticated:
+        current_user = Profile.objects.get(user__id=request.user.id)
+        form = UserInfoForm(request.POST or None, instance=current_user)
+        
+        if form.is_valid():
+            form.save()
+            
+            messages.success(request, "updated successfully")
+            return redirect("home")
+        else:
+            return render(request, "update_info.html", {"form" : form})
+            
+    else:
+        messages.success(request, "You need to login first")
+        return redirect("login")
+
+
+
+def search(request):
+    if request.method == 'POST':
+        searched = request.POST["searched"]
+        # query the products db
+        searched = Product.objects.filter(Q(name__icontains = searched) | Q(description__icontains = searched))
+        if not searched:
+            messages.success(request, "Nothing matches your search")
+            return render(request, "search.html")
+        else:
+            return render(request, "search.html", {"searched" : searched})
+    else:
+        return render(request, "search.html")
